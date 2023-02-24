@@ -5,6 +5,8 @@ const methodOverride = require('method-override')
 const bcrypt = require('bcryptjs')
 const passport = require('passport')
 
+const routes = require('./routes')
+
 const usePassport = require('./config/passport')
 
 const app = express()
@@ -26,14 +28,7 @@ app.use(session({
 
 usePassport(app)
 
-app.get('/', (req, res) => {
-  return Todo.findAll({
-    raw: true,
-    nest: true
-  })
-    .then((todos) => { return res.render('index', { todos: todos }) })
-    .catch((error) => { return res.status(422).json(error) })
-})
+app.use(routes)
 
 app.get('/users/login', (req, res) => {
   res.render('login')
@@ -44,7 +39,6 @@ app.post('/users/login', passport.authenticate('local', {
   failureRedirect: '/users/login'
 }))
 
-
 app.get('/users/register', (req, res) => {
   res.render('register')
 })
@@ -53,13 +47,6 @@ app.post('/users/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
   User.create({ name, email, password })
     .then(user => res.redirect('/'))
-})
-
-app.get('/todos/:id', (req, res) => {
-  const id = req.params.id
-  return Todo.findByPk(id)
-    .then(todo => res.render('detail', { todo: todo.toJSON() }))
-    .catch(error => console.log(error))
 })
 
 app.post('users/register', (req, res) => {
