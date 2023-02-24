@@ -15,7 +15,12 @@ app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
 app.get('/', (req, res) => {
-  res.send('hello world')
+  return Todo.findAll({
+    raw: true,
+    nest: true
+  })
+    .then((todos) => { return res.render('index', { todos: todos }) })
+    .catch((error) => { return res.status(422).json(error)})
 })
 
 app.get('/users/login', (req, res) => {
@@ -31,8 +36,8 @@ app.get('/users/register', (req, res) => {
 })
 
 app.post('/users/register', (req, res) => {
-  const { name, email, password, confirmPassword} = req.body
-  User.create({ name, email, password})
+  const { name, email, password, confirmPassword } = req.body
+  User.create({ name, email, password })
     .then(user => res.redirect('/'))
 })
 
