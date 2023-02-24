@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
     nest: true
   })
     .then((todos) => { return res.render('index', { todos: todos }) })
-    .catch((error) => { return res.status(422).json(error)})
+    .catch((error) => { return res.status(422).json(error) })
 })
 
 app.get('/users/login', (req, res) => {
@@ -39,6 +39,13 @@ app.post('/users/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
   User.create({ name, email, password })
     .then(user => res.redirect('/'))
+})
+
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id
+  return Todo.findByPk(id)
+    .then(todo => res.render('detail', { todo: todo.toJSON() }))
+    .catch(error => console.log(error))
 })
 
 app.get('/users/logout', (req, res) => {
