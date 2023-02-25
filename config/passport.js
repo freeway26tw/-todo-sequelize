@@ -31,7 +31,7 @@ module.exports = app => {
     profileFields: ['email', 'displayName']
   }, (accessToken, refreshToken, profile, done) => {
     const {name, email} = profile._json
-    User.findOne({ email })
+    User.findOne({where: { email }})
       .then(user => {
         if (user) return done(null, user)
         const randomPassword = Math.random().toString(36).slice(-8)
